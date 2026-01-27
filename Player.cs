@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 public partial class Player : CharacterBody3D
-{
+{	
 	public float PixelsPerMeter = 100F;
 	
 	[Export]
@@ -18,9 +18,7 @@ public partial class Player : CharacterBody3D
 	public float gravity;
 
 	[Export]
-	public float mouseRotationSpeed = 2 * 90 * (float)Math.PI / 180 / 800;//0.1125F; // 90 degrees/800 pixels
-	
-	public Vector3 velocity = Vector3.Zero;
+	public float mouseRotationSpeed = (float)MathF.PI / 400;//0.1125F; // 90 degrees/800 pixels
 
 	public Vector2 prevMousePosition = Vector2.Zero;
 	
@@ -32,16 +30,17 @@ public partial class Player : CharacterBody3D
 	[Export]
 	public float cameraDistanceVertical = 1.5F;
 	
+	public Vector3 velocity = Vector3.Zero;
+	
 	public Vector3 prevPlayerRotation = Vector3.Zero;
 	
 	public Vector3 playerLookDirection = Vector3.Zero;
-	
-	//[Export]
-	//public float playerLookDirectionX = 
 												
 	Camera3D camera;
 	
 	Marker3D cameraMarker;
+	
+	Marker3D playerLookDirection3D;
 
 	Player()
 	{
@@ -63,6 +62,8 @@ public partial class Player : CharacterBody3D
 		
 		cameraMarker = GetNode<Marker3D>("Marker3D");
 		
+		playerLookDirection3D = GetNode<Marker3D>("PlayerLookDirection");
+		
 		prevCameraPosition = camera.Position;
 		
 		prevMousePosition = GetViewport().GetMousePosition();
@@ -80,46 +81,55 @@ public partial class Player : CharacterBody3D
 	}
 	
 	private void getPlayerInput(double delta)
-	{
+	{	
+		//GD.Print($"X Component: {playerLookDirection3D.GlobalPosition.X - Position.X}, Z Component: {playerLookDirection3D.GlobalPosition.Z - Position.Z}");
 		if (Input.IsActionPressed("Forward"))
 		{
-			velocity.X += playerLookDirection.X * groundSpeed * (float)delta;
-			velocity.Z += playerLookDirection.Z * groundSpeed * (float)delta;
+			velocity.X += (playerLookDirection3D.GlobalPosition.X - Position.X) * groundSpeed * (float)delta;
+			velocity.Z += (playerLookDirection3D.GlobalPosition.Z - Position.Z) * groundSpeed * (float)delta;
 		}
 		if (Input.IsActionPressed("Backward"))
 		{
-			velocity.X += -playerLookDirection.X * groundSpeed * (float)delta;
-			velocity.Z += -playerLookDirection.Z * groundSpeed * (float)delta;
+			velocity.X += -(playerLookDirection3D.GlobalPosition.X - Position.X) * groundSpeed * (float)delta;
+			velocity.Z += -(playerLookDirection3D.GlobalPosition.Z - Position.Z) * groundSpeed * (float)delta;
 		}
 		if (Input.IsActionPressed("Left"))
 		{
-			velocity.X += playerLookDirection.Z * groundSpeed * (float)delta;
-			velocity.Z += -playerLookDirection.X * groundSpeed * (float)delta;
+			velocity.X += (playerLookDirection3D.GlobalPosition.Z - Position.Z) * groundSpeed * (float)delta;
+			velocity.Z += -(playerLookDirection3D.GlobalPosition.X - Position.X) * groundSpeed * (float)delta;
  		}
 		if (Input.IsActionPressed("Right"))
 		{
-			velocity.X += -playerLookDirection.Z * groundSpeed * (float)delta;
-			velocity.Z += playerLookDirection.X * groundSpeed * (float)delta;
+			velocity.X += -(playerLookDirection3D.GlobalPosition.Z - Position.Z) * groundSpeed * (float)delta;
+			velocity.Z += (playerLookDirection3D.GlobalPosition.X - Position.X) * groundSpeed * (float)delta;
 		}
+		
+		Vector3 velocityBefore = velocity;
 		GD.Print("_________________________________");
+		GD.Print($"Player Look Direciton: {playerLookDirection3D.GlobalRotation.Y}");
 		GD.Print($"Velocity Before: {velocity}");
-		GD.Print($"Speed Before: {(float)Math.Sqrt(Math.Pow((double)velocity.X, 2.0) + Math.Pow((double)velocity.Z, 2.0))}");
-		// this is a bit problematic - while it does bring the velocity closer to the intended velocity, its fucking up somehow
+		GD.Print($"Speed Before: {MathF.Sqrt(MathF.Pow(velocity.X, 2.0F) + MathF.Pow(velocity.Z, 2.0F))}");
+		 //this is a bit problematic - while it does bring the velocity closer to the intended velocity, its fucking up somehow
 		if (velocity.X != 0 && velocity.Z != 0 )
 		{
-			velocity.X = velocity.X * (groundSpeed * (float)delta) / (float)Math.Sqrt(Math.Pow((double)velocity.X, 2.0) + Math.Pow((double)velocity.Z, 2.0)); 
-			velocity.Z = velocity.Z * (groundSpeed * (float)delta) / (float)Math.Sqrt(Math.Pow((double)velocity.X, 2.0) + Math.Pow((double)velocity.Z, 2.0));
+			float normalizeCoefficient = (groundSpeed * (float)delta) / MathF.Sqrt(MathF.Pow(velocity.X, 2.0F) + MathF.Pow(velocity.Z, 2.0F));
+			velocity.X = velocity.X * normalizeCoefficient; 
+			velocity.Z = velocity.Z * normalizeCoefficient;
 		}
-		if (Input.IsActionPressed("Jump") && IsOnFloor()) //&& IsOnFloor()
+		if (Input.IsActionPressed("Jump")) //&& IsOnFloor()
 		{
 			velocity.Y = jumpSpeed * (float)delta;
 		}
-		
+
 		Velocity = velocity;
 		
-		//GD.Print($"Look Direction Distance: {(float)Math.Sqrt((double)(playerLookDirection.X * playerLookDirection.X + playerLookDirection.Z * playerLookDirection.Z))}");
+		Vector3 velocityAfter = velocity;
+		
+		//GD.Print($"Velocity Ratio: {velocityBefore/velocityAfter}");
+		
+		GD.Print($"Look Direction Distance: {(float)Math.Sqrt((double)(playerLookDirection.X * playerLookDirection.X + playerLookDirection.Z * playerLookDirection.Z))}");
 		GD.Print($"Velocity After: {velocity}");
-		GD.Print($"Speed After: {(float)Math.Sqrt(Math.Pow((double)velocity.X, 2.0) + Math.Pow((double)velocity.Z, 2.0))}");
+		GD.Print($"Speed After: {MathF.Sqrt(MathF.Pow(velocity.X, 2.0F) + MathF.Pow(velocity.Z, 2.0F))}");
 		GD.Print("_________________________________");
 		velocity = Vector3.Zero;
 	}
@@ -142,35 +152,6 @@ public partial class Player : CharacterBody3D
 		float mouseAngleDeltaVertical = -mouseDelta.Y * mouseRotationSpeed;
 		cameraMarkerRotationRadians.Z += mouseAngleDeltaVertical;
 		cameraMarker.Rotation = cameraMarkerRotationRadians;
-				
-		// rotate the look direction unit vector
-		float playerLookAngleRadians = 0F;
-		if (playerLookDirection.X >= 0 && playerLookDirection.Z >= 0)
-		{
-			playerLookAngleRadians = (float)Math.Acos((double)playerLookDirection.X);
-			//GD.Print("First Quadrant");
-		}
-		else if (playerLookDirection.X <= 0 && playerLookDirection.Z >= 0)
-		{
-			playerLookAngleRadians = (float)Math.Acos((double)playerLookDirection.X);
-			//GD.Print("Second Quadrant");
-		}
-		else if (playerLookDirection.X <= 0 && playerLookDirection.Z <= 0)
-		{
-			playerLookAngleRadians = 2*(float)Math.PI - (float)Math.Acos((double)playerLookDirection.X);
-			//GD.Print("Third Quadrant");
-		}
-		else
-		{
-			playerLookAngleRadians = 2*(float)Math.PI - (float)Math.Acos((double)playerLookDirection.X);
-			//GD.Print("Fourth Quadrant");
-		}
-		//GD.Print($"Look Angle Radians: {playerLookAngleRadians}");
-		Vector3 newPlayerLookDirection = playerLookDirection;
-		float newPlayerLookAngleRadians = playerLookAngleRadians - mouseAngleDeltaHorizontal;
-		newPlayerLookDirection.X = (float)Math.Cos((double)(newPlayerLookAngleRadians));
-		newPlayerLookDirection.Z = (float)Math.Sin((double)(newPlayerLookAngleRadians));
-		playerLookDirection = newPlayerLookDirection;
 		
 	}
 	
