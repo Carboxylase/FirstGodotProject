@@ -26,6 +26,7 @@ ssr_fade_in = 0.14489044
 [node name="Floor" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 shape = SubResource("BoxShape3D_3fga0")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
@@ -33,7 +34,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 mesh = SubResource("BoxMesh_muqxi")
 
 [node name="Player" parent="." instance=ExtResource("1_x5prf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.3544, 1, -0.711201)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0588107, 3.5485518, -0.70809966)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.8603686, 0.26022485, 0.4382338, 0.5096723, 0.43928087, 0.73977464, 0, 0.8598346, -0.5105729, 0, 9.22362, 0)
