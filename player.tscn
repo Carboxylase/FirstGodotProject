@@ -20,7 +20,7 @@ mesh = SubResource("CapsuleMesh_li4ac")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5237695, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Marker3D"]
-transform = Transform3D(1.192295e-08, 0.3950485, -0.9186603, 2.1456883e-10, 0.9186603, 0.3950485, 1, -4.9072595e-09, 1.08683755e-08, -2, 1.4999999, 0)
+transform = Transform3D(1.1817187e-08, 0.28558794, -0.95835257, 1.5990074e-09, 0.95835257, 0.28558794, 1, -4.907259e-09, 1.08683755e-08, -2, 1.4999999, 0)
 
 [node name="PlayerLookDirection" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)

@@ -1,12 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://cdw4bcmd6anhi"]
+[gd_scene load_steps=9 format=3 uid="uid://cdw4bcmd6anhi"]
 
+[ext_resource type="Texture2D" uid="uid://litru5ha4ygs" path="res://addons/kenney_prototype_textures/dark/texture_08.png" id="1_7tmfp"]
 [ext_resource type="PackedScene" uid="uid://clg6frbet4e4r" path="res://player.tscn" id="1_x5prf"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3fga0"]
-size = Vector3(60, 2, 60)
+size = Vector3(200, 2, 200)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j6xku"]
+albedo_texture = ExtResource("1_7tmfp")
+uv1_triplanar = true
+uv2_triplanar = true
+uv2_world_triplanar = true
 
 [sub_resource type="BoxMesh" id="BoxMesh_muqxi"]
-size = Vector3(60, 2, 60)
+material = SubResource("StandardMaterial3D_j6xku")
+size = Vector3(200, 2, 200)
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_k6s54"]
 
